@@ -5,10 +5,36 @@
 
 
 // Parameters.
+#define HEIGHT 30
+#define WIDTH 40
 #define ROWS 30
-#define COLS 40				// 20 x 2 chars per block
-#define OFF_X 5				// x offset (vertical)
-#define OFF_Y 20			// y offset (horizontal)
+#define COLS 20
+#define OFF_X 5
+#define OFF_Y 20
+
+
+// The grid.
+int grid[ROWS][COLS];
+int h = 0;
+
+
+void init_grid() {
+	for (int i = 0; i < ROWS; i++)
+		for (int j = 0; j < COLS; j++)
+			grid[i][j] = 0;
+}
+
+
+void show_grid() {
+	for (int i = 0; i < ROWS; i++) {
+		for (int j = 0; j < COLS; j++) {
+			if (grid[i][j] != 0) {
+				putcat(OFF_X + i, OFF_Y + 2*j, '[');
+				putcat(OFF_X + i, OFF_Y + 2*j + 1, ']');
+			}
+		}
+	}
+}
 
 
 void startup() {
@@ -42,19 +68,19 @@ void startup() {
 }
 
 
-void display_borders() {
+void show_borders() {
 	// Side lines.
-	for (int i = 0; i < ROWS; i++) {
-		putcat(OFF_X + i, OFF_Y - 1, '|');
-		putcat(OFF_X + i, OFF_Y - 2, '<');
-		putcat(OFF_X + i, OFF_Y + COLS + 1, '|');
-		putcat(OFF_X + i, OFF_Y + COLS + 2, '>');
+	for (int i = 0; i < HEIGHT; i++) {
+		putcat(OFF_X + i, OFF_Y - 2, '|');
+		putcat(OFF_X + i, OFF_Y - 3, '<');
+		putcat(OFF_X + i, OFF_Y + WIDTH + 1, '|');
+		putcat(OFF_X + i, OFF_Y + WIDTH + 2, '>');
 	}
 
 	// Bottom line.
-	for (int i = 0; i < COLS; i++) {
-		putcat(OFF_X + ROWS, OFF_Y + i, '_');
-		putcat(OFF_X + ROWS + 1, OFF_Y + COLS - 1 - i, '^');
+	for (int i = 0; i < WIDTH + 2; i++) {
+		putcat(OFF_X + HEIGHT, OFF_Y - 1 + i, '-');
+		putcat(OFF_X + HEIGHT + 1, OFF_Y + WIDTH - i, '^');
 	}
 }
 
@@ -65,28 +91,60 @@ void load_board() {
 	cls();
 	
 	// Side lines.
-	for (int i = 0; i < ROWS; i++) {
-		putcat(OFF_X + i, OFF_Y - 1, '|');
-		putcat(OFF_X + i, OFF_Y - 2, '<');
-		putcat(OFF_X + i, OFF_Y + COLS + 1, '|');
-		putcat(OFF_X + i, OFF_Y + COLS + 2, '>');
+	for (int i = 0; i < HEIGHT; i++) {
+		putcat(OFF_X + i, OFF_Y - 2, '|');
+		putcat(OFF_X + i, OFF_Y - 3, '<');
+		putcat(OFF_X + i, OFF_Y + WIDTH + 1, '|');
+		putcat(OFF_X + i, OFF_Y + WIDTH + 2, '>');
 		fflush(stdout);
 		usleep(dt);
 	}
 
 	// Bottom line.
-	for (int i = 0; i < COLS; i++) {
-		putcat(OFF_X + ROWS, OFF_Y + i, '_');
-		putcat(OFF_X + ROWS + 1, OFF_Y + COLS - 1 - i, '^');
+	for (int i = 0; i < WIDTH + 2; i++) {
+		putcat(OFF_X + HEIGHT, OFF_Y - 1 + i, '-');
+		putcat(OFF_X + HEIGHT + 1, OFF_Y + WIDTH - i, '^');
 		fflush(stdout);
 		usleep(dt/2);
 	}
 }
 
 
+void refresh() {
+	cls();
+	show_borders();
+	show_grid();
+	fflush(stdout);
+}
+
+
 void restore() {
 	restore_terminal_mode();
 	show_cursor();
+}
+
+void test_update(int x) {
+	if (x > 0 && h == ROWS)
+		return;
+	if (x < 0 && h == 0)
+		return;
+	
+	if (x > 0) {
+		for (int i = 1; i <= x; i++)
+			for (int j = 0; j < COLS; j++)
+				grid[ROWS - h - i][j] = 1;
+	}
+	else if (x < 0) {
+		for (int i = 0; i < -1*x; i++)
+			for (int j = 0; j < COLS; j++)
+				grid[ROWS - h + i][j] = 0;
+	}
+
+	h += x;
+	if (h < 0)
+		h = 0;
+	else if (h > ROWS)
+		h = ROWS;
 }
 
 
