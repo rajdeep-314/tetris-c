@@ -1,18 +1,22 @@
 #include <stdio.h>
 #include <unistd.h>
-#include "screen.h"
+#include <signal.h>
+#include "utils.h"
+#include "tetris.h"
+
 
 
 int main() {
-	while (1) {
-		printf("\nTetris. Coming soon...\n");
-		fflush(stdout);
-		sleep(1);
-		cls();
-		printf("\n");
-		sleep(1);
-	}
-	
+	// Setting up a signal handler for SIGINT.
+	signal(SIGINT, exiting);
+
+	startup();
+	load_board();
+
+	sleep(1);
+
+	exiting();
+
 	return 0;
 }
 

@@ -2,13 +2,10 @@
 
 #include <stdio.h>
 #include <unistd.h>
-#include <termios.h>
-#include <sys/select.h>
-#include "screen.h"
 #include "utils.h"
 
 
-#define udelta 100
+#define UDELTA 100
 
 
 // clear the screen and display the "matrix"
@@ -25,7 +22,7 @@ void display(int n, int rows) {
 }
 
 
-void startup() {
+void starta() {
 	cls();
 	
 	printf("Testing keyboard interactions\n");
@@ -47,7 +44,7 @@ int main() {
 	int n = 5;
 	int rows = 1;
 
-	startup();
+	starta();
 
 	set_terminal_mode();
 	hide_cursor();
@@ -58,7 +55,7 @@ int main() {
 
 	char c;
 	while (1) {
-		if (kbhit(udelta)) {
+		if (kp(UDELTA)) {
 			scanf("%c", &c);
 
 			if (c == 'a' || c == 'A') {
@@ -82,7 +79,7 @@ int main() {
 					break;
 		}
 
-		usleep(udelta);		// delay
+		usleep(UDELTA);		// delay
 	}
 	
 	restore_terminal_mode();

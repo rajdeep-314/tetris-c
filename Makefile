@@ -6,12 +6,12 @@ texe = test-tetris
 
 
 # source code files (.c)
-files = src/screen.c \
-		src/utils.c
+files = src/utils.c \
+		src/tetris.c
 
 # header files (.h)
-headers = src/screen.h \
-		  src/utils.h
+headers = src/utils.h \
+		  src/tetris.h
 
 
 # compiler and compiler flags
