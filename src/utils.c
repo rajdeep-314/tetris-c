@@ -1,33 +1,33 @@
-#include <stdio.h>
 #include <unistd.h>
 #include <termios.h>
+#include <sys/select.h>
 
-char getch(void)
-{
-    char buf = 0;
-    struct termios old = {0};
-    fflush(stdout);
 
-    if(tcgetattr(0, &old) < 0)
-        perror("tcsetattr()");
+int kbhit(int usec) {
+    struct timeval tv;
+    fd_set readfds;
+    
+	tv.tv_sec = 0;
+    tv.tv_usec = usec;
+    
+    FD_ZERO(&readfds);
+    FD_SET(STDIN_FILENO, &readfds);
+    
+    return select(STDIN_FILENO + 1, &readfds, NULL, NULL, &tv);
+}
 
-    old.c_lflag &= ~ICANON;
-    old.c_lflag &= ~ECHO;
-    old.c_cc[VMIN] = 1;
-    old.c_cc[VTIME] = 0;
 
-    if(tcsetattr(0, TCSANOW, &old) < 0)
-        perror("tcsetattr ICANON");
+void set_terminal_mode() {
+    struct termios term;
+    tcgetattr(STDIN_FILENO, &term);
+    term.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &term);
+}
 
-    if(read(0, &buf, 1) < 0)
-        perror("read()");
-
-    old.c_lflag |= ICANON;
-    old.c_lflag |= ECHO;
-
-    if(tcsetattr(0, TCSADRAIN, &old) < 0)
-        perror("tcsetattr ~ICANON");
-
-    return buf;
- }
+void restore_terminal_mode() {
+    struct termios term;
+    tcgetattr(STDIN_FILENO, &term);
+    term.c_lflag |= (ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &term);
+}
 

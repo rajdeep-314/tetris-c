@@ -1,62 +1,91 @@
+// Testing keyboard interactions.
+
 #include <stdio.h>
 #include <unistd.h>
+#include <termios.h>
+#include <sys/select.h>
 #include "screen.h"
 #include "utils.h"
 
 
-void show_bar(int n) {
-	for (int i = 0; i < n; i++)
-		putchar('.');
+#define udelta 100
+
+
+// clear the screen and display the "matrix"
+void display(int n, int rows) {
+	cls();
+
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < n; j++)
+			putchar('.');
+		putchar('\n');
+	}
+
+	fflush(stdout);
 }
 
-void show_bars(int bars[], int n) {
-	for (int i = 0; i < n; i++) {
-		show_bar(bars[i]);
-		putchar('\n');
-		fflush(stdout);
-	}
+
+void startup() {
+	cls();
+	
+	printf("Testing keyboard interactions\n");
+	printf("\nControls:\n");
+	printf("\tA - decrease width\n");
+	printf("\tD - increase width\n");
+	printf("\tS - increase height\n");
+	printf("\tW - decrease height\n");
+	printf("\tX - exit\n");
+	printf("\n\nStarting soon...\n");
+
+	fflush(stdout);
+
+	sleep(2);
 }
+
 
 int main() {
-	printf("Tetris - Testing\n");
-	printf("\nSome animation.\n");
+	int n = 5;
+	int rows = 1;
 
-	sleep(1);
+	startup();
+
+	set_terminal_mode();
 	hide_cursor();
 
-	int nbars = 20,
-		lim = 20;
-
-	int bars[nbars],
-		ds[nbars];
-
-	for (int i = 0; i < nbars; i++) {
-		bars[i] = i;
-		ds[i] = 2*(i % 2) - 1;
-	}
-
+	// need to display outside the loop once because the
+	// other "refreshes" only happen during keyboard interactions
+	display(n, rows);
 
 	char c;
 	while (1) {
-		cls();
-		c = getch();
-		if (c == 'x')
-			break;
+		if (kbhit(udelta)) {
+			scanf("%c", &c);
 
-		// updating  the bars
-		for (int i = 0; i < nbars; i++) {
-			bars[i] += ds[i];
-			if ((bars[i] > lim) || (bars[i] < 0)) {
-				ds[i] *= -1;
-				bars[i] += ds[i];
+			if (c == 'a' || c == 'A') {
+				n = n <= 0 ? 0 : n - 1;
+				display(n, rows);
 			}
+			else if (c == 'd' || c == 'D') {
+				n = n >= 40 ? 40 : n + 1;
+				display(n, rows);
+			}
+			else if (c == 's' || c == 'S') {
+				rows = rows >= 20 ? 20 : rows + 1;
+				display(n, rows);
+			}
+			else if (c == 'w' || c == 'W') {
+				rows = rows <= 0 ? 0 : rows - 1;
+				display(n, rows);
+			}
+			
+			else if (c == 'x' || c == 'X')
+					break;
 		}
 
-		show_bars(bars, nbars);
-
-		usleep(20000);		// delay
+		usleep(udelta);		// delay
 	}
-
+	
+	restore_terminal_mode();
 	show_cursor();
 
 	return 0;
