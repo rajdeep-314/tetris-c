@@ -30,5 +30,8 @@ void set_terminal_mode();
 //	   program.
 void restore_terminal_mode();
 
+// Returns a random integer in the interval [a, b].
+int randint(int a, int b);
+
 
 #endif

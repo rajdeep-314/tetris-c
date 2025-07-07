@@ -7,6 +7,7 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <termios.h>
 #include <sys/select.h>
@@ -62,5 +63,10 @@ void restore_terminal_mode() {
     tcgetattr(STDIN_FILENO, &term);
     term.c_lflag |= (ICANON | ECHO);
     tcsetattr(STDIN_FILENO, TCSANOW, &term);
+}
+
+
+int randint(int a, int b) {
+	return (a + random() % (b - a + 1));
 }
 
