@@ -1,9 +1,6 @@
 main = src/main.c
 exe = tetris
 
-tmain = src/test.c
-texe = test-tetris
-
 
 # source code files (.c)
 files = src/utils.c \
@@ -36,21 +33,4 @@ clean:
 
 
 .PHONY: all run clean
-
-
-
-# targets for testing
-test:	$(texe)
-
-$(texe):	$(tmain) $(files) $(headers)
-	$(cc) $(tmain) $(files) $(cflags) -o $(texe)
-
-test-run:	$(texe)
-	./$(texe)
-
-test-clean:
-	rm -f $(texe)
-
-
-.PHONY: test test-run test-clean
 

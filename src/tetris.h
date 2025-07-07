@@ -48,6 +48,7 @@ void refresh_block(dir d);
 void drop_block();
 
 // Update the grid with the cells that make up the block.
+// NOTE:	Also checks for game over condtion.
 void add_block_to_grid();
 
 // Generate a new block.
@@ -76,6 +77,9 @@ void refresh_grid();
 
 // Restoring the terminal state.
 void restore();
+
+// The "Game Over" screen.
+void game_over();
 
 
 #endif

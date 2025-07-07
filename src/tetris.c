@@ -279,8 +279,17 @@ void drop_block() {
 
 
 void add_block_to_grid() {
-	for (int i = 0; i < 4; i++)
-		grid[block[i][0]][block[i][1]] = 1;
+	int x, y;
+
+	for (int i = 0; i < 4; i++) {
+		x = block[i][0];
+		y = block[i][1];
+
+		if (!(in_bounds(x, y)))
+			game_over();
+
+		grid[x][y] = 1;
+	}
 }
 
 
@@ -403,5 +412,14 @@ void exiting() {
 	restore();
 	
 	exit(0);
+}
+
+void game_over() {
+	cls();
+	
+	printf("\n\nGAME OVER!!\n\n");
+	sleep(2);
+
+	exiting();
 }
 
