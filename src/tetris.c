@@ -7,11 +7,11 @@
 
 
 // Parameters.
-#define HEIGHT 22
-#define WIDTH 32
-#define ROWS 22
-#define COLS 16
-#define OFF_X 3
+#define HEIGHT 20
+#define WIDTH 24
+#define ROWS 20
+#define COLS 12
+#define OFF_X 4
 #define OFF_Y 15
 
 
@@ -22,6 +22,7 @@ int grid[ROWS][COLS];
 int block[4][2];
 int n_block_types = 7;
 int block_type;
+int ori;
 
 
 int in_block(int x, int  y) {
@@ -350,13 +351,328 @@ void drop_block() {
 }
 
 
+// Was very painful to write this.
+int* rot_delta(int btype, int ori) {
+	if (0 >= btype || btype > n_block_types || ori < 0 || ori >= 4)
+		return NULL;
+
+	int* arr = (int*) malloc(8 * sizeof(int));
+
+	if (btype == 1)
+		for (int i = 0; i < 8; i++)	arr[i] = 0;
+
+	else if (btype == 2) {
+		if (ori == 0) {
+			arr[0] = 1;
+			arr[1] = 1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = -1;
+			arr[5] = -1;
+			arr[6] = -2;
+			arr[7] = -2;
+		}
+		else if (ori == 1) {
+			arr[0] = 1;
+			arr[1] = -1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = -1;
+			arr[5] = 1;
+			arr[6] = -2;
+			arr[7] = 2;
+		}
+		else if (ori == 2) {
+			arr[0] = -1;
+			arr[1] = -1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = 1;
+			arr[5] = 1;
+			arr[6] = 2;
+			arr[7] = 2;
+		}
+		else {
+			arr[0] = -1;
+			arr[1] = 1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = 1;
+			arr[5] = -1;
+			arr[6] = 2;
+			arr[7] = -2;
+		}
+	}
+
+	else if (btype == 3) {
+		if (ori == 0) {
+			arr[0] = 0;
+			arr[1] = 0;
+			arr[2] = 1;
+			arr[3] = -1;
+			arr[4] = -1;
+			arr[5] = -1;
+			arr[6] = -2;
+			arr[7] = 0;
+		}
+		else if (ori == 1) {
+			arr[0] = 0;
+			arr[1] = 0;
+			arr[2] = -1;
+			arr[3] = -1;
+			arr[4] = -1;
+			arr[5] = 1;
+			arr[6] = 0;
+			arr[7] = 2;
+		}
+		else if (ori == 2) {
+			arr[0] = 0;
+			arr[1] = 0;
+			arr[2] = -1;
+			arr[3] = 1;
+			arr[4] = 1;
+			arr[5] = 1;
+			arr[6] = 2;
+			arr[7] = 0;
+		}
+		else {
+			arr[0] = 0;
+			arr[1] = 0;
+			arr[2] = 1;
+			arr[3] = 1;
+			arr[4] = 1;
+			arr[5] = -1;
+			arr[6] = 0;
+			arr[7] = -2;
+		}
+	}
+
+	else if (btype == 4) {
+		if (ori == 0) {
+			arr[0] = -1;
+			arr[1] = 1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = -1;
+			arr[5] = -1;
+			arr[6] = 0;
+			arr[7] = -2;
+		}
+		else if (ori == 1) {
+			arr[0] = 1;
+			arr[1] = 1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = -1;
+			arr[5] = 1;
+			arr[6] = -2;
+			arr[7] = 0;
+		}
+		else if (ori == 2) {
+			arr[0] = 1;
+			arr[1] = -1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = 1;
+			arr[5] = 1;
+			arr[6] = 0;
+			arr[7] = 2;
+		}
+		else {
+			arr[0] = -1;
+			arr[1] = -1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = 1;
+			arr[5] = -1;
+			arr[6] = 2;
+			arr[7] = 0;
+		}
+	}
+
+	else if (btype == 5) {
+		if (ori == 0) {
+			arr[0] = 1;
+			arr[1] = 1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = -1;
+			arr[5] = -1;
+			arr[6] = 0;
+			arr[7] = -2;
+		}
+		else if (ori == 1) {
+			arr[0] = 1;
+			arr[1] = -1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = -1;
+			arr[5] = 1;
+			arr[6] = -2;
+			arr[7] = 0;
+		}
+		else if (ori == 2) {
+			arr[0] = -1;
+			arr[1] = -1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = 1;
+			arr[5] = 1;
+			arr[6] = 0;
+			arr[7] = 2;
+		}
+		else {
+			arr[0] = -1;
+			arr[1] = 1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = 1;
+			arr[5] = -1;
+			arr[6] = 2;
+			arr[7] = 0;
+		}
+	}
+
+	else if (btype == 6) {
+		if (ori == 0) {
+			arr[0] = 1;
+			arr[1] = 1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = -1;
+			arr[5] = -1;
+			arr[6] = -2;
+			arr[7] = 0;
+		}
+		else if (ori == 1) {
+			arr[0] = 1;
+			arr[1] = -1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = -1;
+			arr[5] = 1;
+			arr[6] = 0;
+			arr[7] = 2;
+		}
+		else if (ori == 2) {
+			arr[0] = -1;
+			arr[1] = -1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = 1;
+			arr[5] = 1;
+			arr[6] = 2;
+			arr[7] = 0;
+		}
+		else {
+			arr[0] = -1;
+			arr[1] = 1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = 1;
+			arr[5] = -1;
+			arr[6] = 0;
+			arr[7] = -2;
+		} }
+
+	else if (btype == 7) {
+		if (ori == 0) {
+			arr[0] = -1;
+			arr[1] = 1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = 1;
+			arr[5] = -1;
+			arr[6] = -1;
+			arr[7] = -1;
+		}
+		else if (ori == 1) {
+			arr[0] = 1;
+			arr[1] = 1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = -1;
+			arr[5] = -1;
+			arr[6] = -1;
+			arr[7] = 1;
+		}
+		else if (ori == 2) {
+			arr[0] = 1;
+			arr[1] = -1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = -1;
+			arr[5] = 1;
+			arr[6] = 1;
+			arr[7] = 1;
+		}
+		else {
+			arr[0] = -1;
+			arr[1] = -1;
+			arr[2] = 0;
+			arr[3] = 0;
+			arr[4] = 1;
+			arr[5] = 1;
+			arr[6] = 1;
+			arr[7] = -1;
+		}
+	}
+
+	return arr;
+}
+
 int valid_rotation() {
-	return 0;
+	if (block_type == 1)
+		return 0;
+
+	int* rd = rot_delta(block_type, ori);
+	
+	int x, y;
+	int nblock[4][2];
+	
+	for (int i = 0; i < 4; i++) {
+		nblock[i][0] = block[i][0] + rd[2*i];
+		nblock[i][1] = block[i][1] + rd[2*i + 1];
+	}
+
+	// Checking if each of the new blocks is inside the bounds
+	// and in an empty cell.
+	for (int i = 0; i < 4; i++) {
+		x = nblock[i][0];
+		y = nblock[i][1];
+		if (!(in_bounds(x, y) && is_empty(x, y))) {
+			free(rd);
+			return 0;
+		}
+	}
+
+	free(rd);
+	return 1;
 }
 
 
 void rotate() {
-	//
+	hide_block();
+	hide_shadow();
+	
+	if (block_type == 1)
+		return;
+
+	int* rd = rot_delta(block_type, ori);
+
+	for (int i = 0; i < 4; i++) {
+		block[i][0] += rd[2*i];
+		block[i][1] += rd[2*i + 1];
+	}
+
+	free(rd);
+
+	// Updating the orientation.
+	ori = (ori + 1) % 4;
+
+	show_shadow();
+	show_block();
+	fflush(stdout);
 }
 
 
@@ -380,6 +696,7 @@ void add_block_to_grid() {
 void make_new_block() {
 	block_type = randint(1, n_block_types);
 	init_block(block_type);
+	ori = 0;
 }
 
 
@@ -503,11 +820,11 @@ void exiting() {
 void paused() {
 	cls();
 	show_borders();
-	setc(OFF_X + ROWS/2 - 3, OFF_Y + COLS/2 + 5);
+	setc(OFF_X + ROWS/2 - 3, OFF_Y + COLS/2 + 2);
 	printf("PAUSED");
-	setc(OFF_X + ROWS/2 - 1, OFF_Y + 8);
+	setc(OFF_X + ROWS/2 - 1, OFF_Y + 3);
 	printf("Press P to resume.");
-	setc(OFF_X + ROWS/2, OFF_Y + 8);
+	setc(OFF_X + ROWS/2, OFF_Y + 3);
 	printf("Press X to exit.");
 	fflush(stdout);
 
