@@ -8,14 +8,20 @@
 
 
 #define UPOLL 750					// Polling interval in microseconds.
-#define CFT   314					// Fall time in number of while loop cycles.
+#define CDT   145					// Number of cycles for each CFT reduction.
+#define CFTD  1						// CFT reduction per reduction.
+#define MIN_CFT 150					// Minimum CFT (max difficulty).
+
+
+extern int CFTI, CFT;
+extern unsigned long long acc;
 
 
 int main() {
 	// Initializations
 	signal(SIGINT, exiting);					// Signal handler for SIGINT.
-	init_grid();								// Initialize the grid to empty.
 	srand(time(0));								// Random seed.
+	init_params();					// Initialize CFT, the grid and the time.
 	make_new_block();							// The first block.
 	int time = 0;
 
@@ -24,16 +30,29 @@ int main() {
 	load_board();			// Board loading animation.
 	show_shadow();			// Display the initial block's shadow.
 	show_block();			// Display the initial block.
+	show_score();			// Display the score.
 
 
 	char input;
+	int wcount = 0;
+
 
 	// Loop.
 	while (1) {
+		acc++;
+		wcount++;
+
+		// Increasing the difficulty.
+		if (wcount >= CDT && CDT >= CFTD + MIN_CFT) {
+			wcount -= CDT;
+			CFT -= CFTD;
+		}
+
 		// If it's time for a new block to arrive (add here).
 		if (!(valid_move(DOWN))) {
 			add_block_to_grid();
 			make_new_block();
+			show_score(acc / 100);
 		}
 
 		// If a key is pressed.
@@ -75,9 +94,7 @@ int main() {
 
 			// R - Restart.
 			else if (input == 'r') {
-				init_grid();
-				make_new_block();
-				refresh_grid();
+				restart();
 			}
 
 			// T - Refresh.

@@ -8,6 +8,15 @@ typedef enum {
 } dir;
 
 
+// Initialize some parameters - CFT, score and the grid.
+void init_params();
+
+// Displays the score.
+void show_score();
+
+// Restart.
+void restart();
+
 // Is the cell at (x, y) part of the current block?
 int in_block(int x, int  y);
 

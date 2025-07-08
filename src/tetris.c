@@ -24,6 +24,33 @@ int n_block_types = 7;
 int block_type;
 int ori;
 
+int CFTI = 400;							// Initial CFT value.
+int CFT;								// Number of while loop cycles till a block drops (inverse of difficulty).
+unsigned long long acc;					// Accumulator (used for score).
+unsigned long long dampener = 250;		// score := acc / dampener.
+
+
+void init_params() {
+	CFT = CFTI;
+	acc = 0;
+	init_grid();
+}
+
+
+void show_score() {
+	setc(OFF_X + HEIGHT/2 - 1, OFF_Y + WIDTH + 13);
+	printf("SCORE: %llu", acc / dampener);
+}
+
+
+void restart() {
+	cls();
+	init_params();
+	load_board();
+	make_new_block();
+	fflush(stdout);
+}
+
 
 int in_block(int x, int  y) {
 	for (int i = 0; i < 4; i++)
@@ -80,6 +107,7 @@ void remove_rows(int lim) {
 		
 		// If it's full, drop down everything above it by one row.
 		if (full) {
+			acc += 50 * dampener;
 			count++;
 			for (int k = i - 1; k >= 0; k--)
 				for (int l = 0; l < COLS; l++)
@@ -683,8 +711,10 @@ void add_block_to_grid() {
 		x = block[i][0];
 		y = block[i][1];
 
-		if (!(in_bounds(x, y)))
+		if (!(in_bounds(x, y))) {
 			game_over();
+			return;
+		}
 
 		grid[x][y] = 1;
 	}
@@ -820,11 +850,11 @@ void exiting() {
 void paused() {
 	cls();
 	show_borders();
-	setc(OFF_X + ROWS/2 - 3, OFF_Y + COLS/2 + 2);
+	setc(OFF_X + HEIGHT/2 - 3, OFF_Y + WIDTH/2 - 4);
 	printf("PAUSED");
-	setc(OFF_X + ROWS/2 - 1, OFF_Y + 3);
+	setc(OFF_X + HEIGHT/2 - 1, OFF_Y + WIDTH/2 - 9);
 	printf("Press P to resume.");
-	setc(OFF_X + ROWS/2, OFF_Y + 3);
+	setc(OFF_X + HEIGHT/2, OFF_Y + WIDTH/2 - 9);
 	printf("Press X to exit.");
 	fflush(stdout);
 
@@ -842,6 +872,7 @@ void paused() {
 				refresh_grid();
 				show_shadow();
 				show_block();
+				show_score();
 				fflush(stdout);
 				return;
 			}
@@ -852,10 +883,31 @@ void paused() {
 
 void game_over() {
 	cls();
-	
-	printf("\n\nGAME OVER!!\n\n");
-	sleep(2);
+	show_borders();
+	setc(OFF_X + HEIGHT/2 - 4, OFF_Y + WIDTH/2 - 5);
+	printf("SCORE: %llu", acc / dampener);
+	setc(OFF_X + HEIGHT/2 - 2, OFF_Y + WIDTH/2 - 5);
+	printf("GAME OVER");
+	setc(OFF_X + HEIGHT/2, OFF_Y + WIDTH/2 - 11);
+	printf("Press P to play again.");
+	setc(OFF_X + HEIGHT/2 + 1, OFF_Y + WIDTH/2 - 11);
+	printf("Press X to exit.");
+	fflush(stdout);
 
-	exiting();
+	char input;
+	
+	while (1) {
+		if (kp(500)) {
+			input = lowercase(getchar());
+
+			if (input == 'p') {
+				restart();
+				return;
+			}
+
+			else if (input == 'x')
+				exiting();
+		}
+	}
 }
 
