@@ -22,10 +22,10 @@ int main() {
 	// Starting animations.
 	startup();				// The starting screen.
 	load_board();			// Board loading animation.
+	show_shadow();			// Display the initial block's shadow.
 	show_block();			// Display the initial block.
 
 
-	int paused = 0;
 	char input;
 
 	// Loop.
@@ -38,12 +38,11 @@ int main() {
 
 		// If a key is pressed.
 		if (kp(UPOLL)) {
-			input = getchar();
-			input = 65 <= input && input <= 90 ? input ^ 32 : input;
+			input = lowercase(getchar());
 
-			// Spacebar : Pause.
-			if (input == ' ')
-				paused = 1 - paused;
+			// P : Pause.
+			if (input == 'p')
+				paused();
 
 			// A - Left.
 			else if (input == 'a') {
@@ -63,8 +62,14 @@ int main() {
 					refresh_block(DOWN);
 			}
 
-			// Z - Drop down.
-			else if (input == 'z') {
+			// A - Rotate clockwise.
+			else if (input == 'w') {
+				if (valid_rotation())
+					rotate();
+			}
+
+			// Spacebar - Drop down.
+			else if (input == ' ') {
 				drop_block();
 			}
 
@@ -72,6 +77,12 @@ int main() {
 			else if (input == 'r') {
 				init_grid();
 				make_new_block();
+				refresh_grid();
+			}
+
+			// T - Refresh.
+			else if (input == 't') {
+				cls();
 				refresh_grid();
 			}
 

@@ -8,16 +8,15 @@
 
 // Parameters.
 #define HEIGHT 22
-#define WIDTH 30
+#define WIDTH 32
 #define ROWS 22
-#define COLS 15
+#define COLS 16
 #define OFF_X 3
 #define OFF_Y 15
 
 
 // The grid.
 int grid[ROWS][COLS];
-int h = 0;
 
 // The one falling block.
 int block[4][2];
@@ -25,19 +24,70 @@ int n_block_types = 7;
 int block_type;
 
 
-void show_cell(int x, int y) {
-	if (x < 0 || x > ROWS - 1)	return;
-	if (y < 0 || y > COLS - 1)	return;
-	putcat(OFF_X + x, OFF_Y + 2*y, '[');
-	putcat(OFF_X + x, OFF_Y + 2*y + 1, ']');
+int in_block(int x, int  y) {
+	for (int i = 0; i < 4; i++)
+		if (grid[i][0] == x && grid[i][1] == y)
+			return 1;
+
+	return 0;
 }
 
 
-void hide_cell(int x, int y) {
-	if (x < 0 || x > ROWS - 1)	return;
-	if (y < 0 || y > COLS - 1)	return;
-	putcat(OFF_X + x, OFF_Y + 2*y, ' ');
-	putcat(OFF_X + x, OFF_Y + 2*y + 1, ' ');
+int in_bounds(int x, int y) {
+	return (x >= 0 && x < ROWS && y >= 0 && y < COLS);
+}
+
+int is_empty(int x, int y) {
+	return (grid[x][y] == 0);
+}
+
+int is_occupied(int x, int y) {
+	return (!(is_empty(x, y)));
+}
+
+
+void show_cell_char(int x, int y, char c1, char c2) {
+	if (!(in_bounds(x, y)))
+		return;
+	putcat(OFF_X + x, OFF_Y + 2*y, c1);
+	putcat(OFF_X + x, OFF_Y + 2*y + 1, c2);
+}
+
+
+void show_cell(int x, int y) {
+	show_cell_char(x, y, '[', ']');
+}
+
+void erase(int x, int y) {
+	show_cell_char(x, y, ' ', ' ');
+}
+
+
+void remove_rows(int lim) {
+	int count = 0;
+
+	for (int i = ROWS - 1; i >= 0; i--) {
+		if (count >= lim)
+			break;
+		// Is row i full?
+		int full = 1;
+		for (int j = 0; j < COLS; j++)
+			if (grid[i][j] == 0) {
+				full = 0;
+				break;
+			}
+		
+		// If it's full, drop down everything above it by one row.
+		if (full) {
+			count++;
+			for (int k = i - 1; k >= 0; k--)
+				for (int l = 0; l < COLS; l++)
+					grid[k + 1][l] = grid[k][l];
+
+			i++;		// To check the new row.
+			refresh_grid();
+		}
+	}
 }
 
 
@@ -164,13 +214,28 @@ void init_block(int b) {
 }
 
 
-void show_block() {
-	int x, y;
+int steps_to_drop() {
+	int steps = INT_MAX;
+
+	int x, y, j;
 	for (int i = 0; i < 4; i++) {
 		x = block[i][0];
 		y = block[i][1];
-		show_cell(x, y);
+
+		for (j = x; j < ROWS; j++)
+			if (grid[j][y] != 0)
+				break;
+		
+		steps = steps <= j - x - 1 ? steps : j - x - 1;
 	}
+
+	return steps;
+}
+
+
+void show_block() {
+	for (int i = 0; i < 4; i++)
+		show_cell(block[i][0], block[i][1]);
 }
 
 
@@ -179,9 +244,36 @@ void hide_block() {
 	for (int i = 0; i < 4; i++) {
 		x = block[i][0];
 		y = block[i][1];
-		hide_cell(x, y);
+		erase(x, y);
 	}
 }
+
+
+void show_shadow() {
+	int steps = steps_to_drop();
+
+	int x, y;
+	for (int i = 0; i < 4; i++) {
+		x = block[i][0];
+		y = block[i][1];
+
+		show_cell_char(x + steps, y, '(', ')');
+	}
+}
+
+
+void hide_shadow() {
+	int steps = steps_to_drop();
+	
+	int x, y;
+	for (int i = 0; i < 4; i++) {
+		x = block[i][0];
+		y = block[i][1];
+
+		erase(x + steps, y);
+	}
+}
+
 
 int dir_to_dx(dir d) {
 	if (d == LEFT || d == RIGHT)
@@ -202,28 +294,6 @@ int dir_to_dy(dir d) {
 	if (d == RIGHT)
 		return 1;
 	return -1;
-}
-
-
-int in_block(int x, int  y) {
-	for (int i = 0; i < 4; i++)
-		if (grid[i][0] == x && grid[i][1] == y)
-			return 1;
-
-	return 0;
-}
-
-
-int in_bounds(int x, int y) {
-	return (x >= 0 && x < ROWS && y >= 0 && y < COLS);
-}
-
-int is_empty(int x, int y) {
-	return (grid[x][y] == 0);
-}
-
-int is_occupied(int x, int y) {
-	return (!(is_empty(x, y)));
 }
 
 
@@ -254,6 +324,7 @@ int valid_move(dir d) {
 // NOTE:	This function assumes that a move in direction d
 // is possible.
 void refresh_block(dir d) {
+	hide_shadow();
 	hide_block();
 
 	int dx, dy;
@@ -267,6 +338,7 @@ void refresh_block(dir d) {
 		block[i][1] += dy;
 	}
 
+	show_shadow();
 	show_block();
 	fflush(stdout);
 }
@@ -275,6 +347,16 @@ void refresh_block(dir d) {
 void drop_block() {
 	while (valid_move(DOWN))
 		refresh_block(DOWN);
+}
+
+
+int valid_rotation() {
+	return 0;
+}
+
+
+void rotate() {
+	//
 }
 
 
@@ -290,11 +372,14 @@ void add_block_to_grid() {
 
 		grid[x][y] = 1;
 	}
+
+	remove_rows(4);
 }
 
 
 void make_new_block() {
-	init_block(randint(1, n_block_types));
+	block_type = randint(1, n_block_types);
+	init_block(block_type);
 }
 
 
@@ -413,6 +498,40 @@ void exiting() {
 	
 	exit(0);
 }
+
+
+void paused() {
+	cls();
+	show_borders();
+	setc(OFF_X + ROWS/2 - 3, OFF_Y + COLS/2 + 5);
+	printf("PAUSED");
+	setc(OFF_X + ROWS/2 - 1, OFF_Y + 8);
+	printf("Press P to resume.");
+	setc(OFF_X + ROWS/2, OFF_Y + 8);
+	printf("Press X to exit.");
+	fflush(stdout);
+
+	char input;
+	
+	while (1) {
+		if (kp(500)) {
+			input = lowercase(getchar());
+
+			if (input == 'x')
+				exiting();
+
+			else if (input == 'p') {
+				cls();
+				refresh_grid();
+				show_shadow();
+				show_block();
+				fflush(stdout);
+				return;
+			}
+		}
+	}
+}
+
 
 void game_over() {
 	cls();

@@ -8,22 +8,6 @@ typedef enum {
 } dir;
 
 
-
-// Show the cell ([]) at the y'th column in the x'th row.
-void show_cell(int x, int y);
-
-// Hide the cell at the y'th column in the x'th row.
-void hide_cell(int x, int y);
-
-// Initialize the falling block wtih the block type b.
-void init_block(int b);
-
-// Show the cells that make up the block.
-void show_block();
-
-// Hides the cells that make up the block.
-void hide_block();
-
 // Is the cell at (x, y) part of the current block?
 int in_block(int x, int  y);
 
@@ -36,6 +20,37 @@ int is_empty(int x, int y);
 // Is the cell at (x, y) occupied (in the grid)?
 int is_occupied(int x, int y);
 
+// Show a cell at y'th column in the x'th row with the left and right
+// characters being c1 and c2, respectively.
+void show_cell_char(int x, int y, char c1, char c2);
+
+// Show [] at (x, y).
+void show_cell(int x, int y);
+
+// Erase at (x, y).
+void erase(int x, int y);
+
+// Remove up to lim ful rows and manipulate the rest of the grid accordingly.
+void remove_rows(int lim);
+
+// Initialize the falling block wtih the block type b.
+void init_block(int b);
+
+// The number of steps for the current block to drops down.
+int steps_to_drop();
+
+// Show the cells that make up the block.
+void show_block();
+
+// Hides the cells that make up the block.
+void hide_block();
+
+// Shows the block's shadow (where it will drop to).
+void show_shadow();
+
+// Erases the block's shadow.
+void erase_shadow();
+
 // Tells if making a move in the direction d is valid (no obstacles).
 int valid_move(dir d);
 
@@ -46,6 +61,12 @@ void refresh_block(dir d);
 
 // Drop the block down as far as it can go.
 void drop_block();
+
+// Is it possible to rotate the current block clockwise by 90 degrees?
+int valid_rotation();
+
+// Rotate the current block clockwise by 90 degrees.
+void rotate();
 
 // Update the grid with the cells that make up the block.
 // NOTE:	Also checks for game over condtion.
@@ -77,6 +98,9 @@ void refresh_grid();
 
 // Restoring the terminal state.
 void restore();
+
+// The pause screen.
+void paused();
 
 // The "Game Over" screen.
 void game_over();

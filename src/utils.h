@@ -5,6 +5,9 @@
 // Clear the screen using an ANSI escape sequence.
 void cls();
 
+// Set the cursor to the y'th column of the x'th row.
+void setc(int x, int y);
+
 // Put the character c at (x, y) - in the y'th column in the x'th row.
 void putcat(int x, int y, char c);
 
@@ -32,6 +35,9 @@ void restore_terminal_mode();
 
 // Returns a random integer in the interval [a, b].
 int randint(int a, int b);
+
+// Returns the lowercase of c if it is uppercase.
+char lowercase(char c);
 
 
 #endif

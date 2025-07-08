@@ -18,8 +18,13 @@ void cls() {
 }
 
 
-void putcat(int x, int y, char c) {
+void setc(int x, int y) {
 	printf("\e[%d;%dH", x, y);
+}
+
+
+void putcat(int x, int y, char c) {
+	setc(x, y);
 	putchar(c);
 }
 
@@ -68,5 +73,10 @@ void restore_terminal_mode() {
 
 int randint(int a, int b) {
 	return (a + random() % (b - a + 1));
+}
+
+
+char lowercase(char c) {
+	return (65 <= c && c <= 90 ? c ^ 32 : c);
 }
 
