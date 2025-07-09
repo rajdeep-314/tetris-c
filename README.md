@@ -1,10 +1,67 @@
 # Tetris
 
-[Tetris](https://en.wikipedia.org/wiki/Tetris) for the terminal, programmed in C.
+Feeling inspired after watching
+[Tetris (2023)](https://en.wikipedia.org/wiki/Tetris_(film)) (especially
+[this scene](https://www.youtube.com/watch?v=c0qEO3gisvo)), I decided to make a
+terminal-based Tetris in C. This is the result of that.
 
 
-# Controls
+```
+           <!                          !>
+           <!                          !>
+           <!                          !>
+           <!                          !>
+           <!                          !>
+           <!                          !>
+           <!                          !>
+           <!                          !>
+           <!                          !>
+           <!      []                  !>
+           <!      [][]                !>          SCORE: 19
+           <!      []                  !>
+           <!                          !>
+           <!                          !>
+           <!                          !>
+           <!                          !>
+           <!                          !>
+           <!      ()        []      []!>
+           <!      ()()    [][]      []!>
+           <!      ()[][][][][]    [][]!>
+           <!==========================!>
+             \/\/\/\/\/\/\/\/\/\/\/\/\/
+```
 
+Check out [this](https://www.youtube.com/watch?v=iaHm9NIWYfU) YouTube video for
+a gameplay.
+
+
+# How to play?
+
+## Building and running
+
+Download the source code or clone the repository
+```bash
+git clone https://github.com/rajdeep-314/tetris-c
+```
+
+Build the executable using `make`
+```bash
+make tetris
+```
+
+And then execute the executable to start playing
+```bash
+./tetris
+```
+
+To build and then run in a single command, you can use
+```bash
+make run
+```
+
+## Controls
+
+### Main screen
 
 - `x` : Exit
 - `a` : Move the block left
@@ -16,22 +73,13 @@
 - `t` : Refresh (in case of a visual glitch)
 - `a` : Rotate the block clockwise by $90^\circ$
 
+### Pause screen
 
-# Instructions
+- `p` : Resume
+- `x` : Exit
 
+### Game over screen
 
-Download the source code or clone the repository using
-```bash
-git clone https://github.com/rajdeep-314/tetris-c
-```
-
-Build the executable using
-```bash
-make tetris
-```
-
-And then execute the executable to play
-```bash
-./tetris
-```
+- `p` : Play again
+- `x` : Exit
 
