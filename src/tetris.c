@@ -713,7 +713,7 @@ void add_block_to_grid() {
         x = block[i][0];
         y = block[i][1];
 
-        if (!(in_bounds(x, y))) {
+        if (x < 0 || x >= ROWS) {
             game_over();
             return;
         }
