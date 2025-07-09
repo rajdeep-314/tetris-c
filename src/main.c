@@ -63,14 +63,14 @@ int main() {
             if (input == 'p')
                 paused();
 
-            // A - Left.
-            else if (input == 'a') {
+            // A, H - Left.
+            else if (input == 'a' || input == 'h') {
                 if (valid_move(LEFT))
                     refresh_block(LEFT);
             }
 
-            // D - Right.
-            else if (input == 'd') {
+            // D, L - Right.
+            else if (input == 'd' || input == 'l') {
                 if (valid_move(RIGHT))
                     refresh_block(RIGHT);
             }
@@ -81,8 +81,8 @@ int main() {
                     refresh_block(DOWN);
             }
 
-            // A - Rotate clockwise.
-            else if (input == 'w') {
+            // W, K - Rotate clockwise.
+            else if (input == 'w' || input == 'k') {
                 if (valid_rotation())
                     rotate();
             }

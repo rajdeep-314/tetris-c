@@ -64,14 +64,14 @@ make run
 ### Main screen
 
 - `x` : Exit
-- `a` : Move the block left
-- `d` : Move the block right
+- `a`, `h` : Move the block left
+- `d`, `l` : Move the block right
 - `s` : Gentle drop
 - `␣` : Hard drop
 - `p` : Pause
 - `r` : Restart
 - `t` : Refresh (in case of a visual glitch)
-- `a` : Rotate the block clockwise by $90^\circ$
+- `w`, `k` : Rotate the block clockwise by $90^\circ$
 
 ### Pause screen
 
