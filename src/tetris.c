@@ -779,17 +779,20 @@ void startup() {
 
 void show_borders() {
 	// Side lines.
-	for (int i = 0; i < HEIGHT; i++) {
-		putcat(OFF_X + i, OFF_Y - 2, '|');
+	for (int i = 0; i <= HEIGHT; i++) {
+		putcat(OFF_X + i, OFF_Y - 2, '!');
 		putcat(OFF_X + i, OFF_Y - 3, '<');
-		putcat(OFF_X + i, OFF_Y + WIDTH + 1, '|');
+		putcat(OFF_X + i, OFF_Y + WIDTH + 1, '!');
 		putcat(OFF_X + i, OFF_Y + WIDTH + 2, '>');
 	}
 
 	// Bottom line.
 	for (int i = 0; i < WIDTH + 2; i++) {
-		putcat(OFF_X + HEIGHT, OFF_Y - 1 + i, '-');
-		putcat(OFF_X + HEIGHT + 1, OFF_Y + WIDTH - i, '^');
+		putcat(OFF_X + HEIGHT, OFF_Y - 1 + i, '=');
+		if (i % 2 == 0)
+			putcat(OFF_X + HEIGHT + 1, OFF_Y + WIDTH - i, '/');
+		else
+			putcat(OFF_X + HEIGHT + 1, OFF_Y + WIDTH - i, '\\');
 	}
 }
 
@@ -800,10 +803,10 @@ void load_board() {
 	cls();
 	
 	// Side lines.
-	for (int i = 0; i < HEIGHT; i++) {
-		putcat(OFF_X + i, OFF_Y - 2, '|');
+	for (int i = 0; i <= HEIGHT; i++) {
+		putcat(OFF_X + i, OFF_Y - 2, '!');
 		putcat(OFF_X + i, OFF_Y - 3, '<');
-		putcat(OFF_X + i, OFF_Y + WIDTH + 1, '|');
+		putcat(OFF_X + i, OFF_Y + WIDTH + 1, '!');
 		putcat(OFF_X + i, OFF_Y + WIDTH + 2, '>');
 		fflush(stdout);
 		usleep(dt);
@@ -811,8 +814,11 @@ void load_board() {
 
 	// Bottom line.
 	for (int i = 0; i < WIDTH + 2; i++) {
-		putcat(OFF_X + HEIGHT, OFF_Y - 1 + i, '-');
-		putcat(OFF_X + HEIGHT + 1, OFF_Y + WIDTH - i, '^');
+		putcat(OFF_X + HEIGHT, OFF_Y - 1 + i, '=');
+		if (i % 2 == 0)
+			putcat(OFF_X + HEIGHT + 1, OFF_Y + WIDTH - i, '/');
+		else
+			putcat(OFF_X + HEIGHT + 1, OFF_Y + WIDTH - i, '\\');
 		fflush(stdout);
 		usleep(dt/2);
 	}
