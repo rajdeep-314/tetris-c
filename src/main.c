@@ -7,10 +7,10 @@
 #include "tetris.h"
 
 
-#define UPOLL 750					// Polling interval in microseconds.
-#define CDT   145					// Number of cycles for each CFT reduction.
-#define CFTD  1						// CFT reduction per reduction.
-#define MIN_CFT 150					// Minimum CFT (max difficulty).
+#define UPOLL 750                   // Polling interval in microseconds.
+#define CDT   145                   // Number of cycles for each CFT reduction.
+#define CFTD  1                     // CFT reduction per reduction.
+#define MIN_CFT 150                 // Minimum CFT (max difficulty).
 
 
 extern int CFTI, CFT;
@@ -18,111 +18,111 @@ extern unsigned long long acc;
 
 
 int main() {
-	// Initializations
-	signal(SIGINT, exiting);					// Signal handler for SIGINT.
-	srand(time(0));								// Random seed.
-	init_params();					// Initialize CFT, the grid and the time.
-	make_new_block();							// The first block.
-	int time = 0;
+    // Initializations
+    signal(SIGINT, exiting);        // Signal handler for SIGINT.
+    srand(time(0));                 // Random seed.
+    init_params();                  // Initialize CFT and the grid.
+    make_new_block();               // The first block.
+    int time = 0;                   // Initialize the time.
 
-	// Starting animations.
-	startup();				// The starting screen.
-	load_board();			// Board loading animation.
-	show_shadow();			// Display the initial block's shadow.
-	show_block();			// Display the initial block.
-	show_score();			// Display the score.
-
-
-	char input;
-	int wcount = 0;
+    // Starting animations.
+    startup();                      // The starting screen.
+    load_board();                   // Board loading animation.
+    show_shadow();                  // Display the initial block's shadow.
+    show_block();                   // Display the initial block.
+    show_score();                   // Display the score.
 
 
-	// Loop.
-	while (1) {
-		acc++;
-		wcount++;
+    char input;
+    int wcount = 0;
 
-		// Increasing the difficulty.
-		if (wcount >= CDT && CDT >= CFTD + MIN_CFT) {
-			wcount -= CDT;
-			CFT -= CFTD;
-		}
 
-		// If it's time for a new block to arrive (add here).
-		if (!(valid_move(DOWN))) {
-			add_block_to_grid();
-			make_new_block();
-			show_score(acc / 100);
-		}
+    // Loop.
+    while (1) {
+        acc++;
+        wcount++;
 
-		// If a key is pressed.
-		if (kp(UPOLL)) {
-			input = lowercase(getchar());
+        // Increasing the difficulty.
+        if (wcount >= CDT && CDT >= CFTD + MIN_CFT) {
+            wcount -= CDT;
+            CFT -= CFTD;
+        }
 
-			// P : Pause.
-			if (input == 'p')
-				paused();
+        // If it's time for a new block to arrive (add here).
+        if (!(valid_move(DOWN))) {
+            add_block_to_grid();
+            make_new_block();
+            show_score(acc / 100);
+        }
 
-			// A - Left.
-			else if (input == 'a') {
-				if (valid_move(LEFT))
-					refresh_block(LEFT);
-			}
+        // If a key is pressed.
+        if (kp(UPOLL)) {
+            input = lowercase(getchar());
 
-			// D - Right.
-			else if (input == 'd') {
-				if (valid_move(RIGHT))
-					refresh_block(RIGHT);
-			}
+            // P : Pause.
+            if (input == 'p')
+                paused();
 
-			// S - Down.
-			else if (input == 's') {
-				if (valid_move(DOWN))
-					refresh_block(DOWN);
-			}
+            // A - Left.
+            else if (input == 'a') {
+                if (valid_move(LEFT))
+                    refresh_block(LEFT);
+            }
 
-			// A - Rotate clockwise.
-			else if (input == 'w') {
-				if (valid_rotation())
-					rotate();
-			}
+            // D - Right.
+            else if (input == 'd') {
+                if (valid_move(RIGHT))
+                    refresh_block(RIGHT);
+            }
 
-			// Spacebar - Drop down.
-			else if (input == ' ') {
-				drop_block();
-			}
+            // S - Down.
+            else if (input == 's') {
+                if (valid_move(DOWN))
+                    refresh_block(DOWN);
+            }
 
-			// R - Restart.
-			else if (input == 'r') {
-				restart();
-			}
+            // A - Rotate clockwise.
+            else if (input == 'w') {
+                if (valid_rotation())
+                    rotate();
+            }
 
-			// T - Refresh.
-			else if (input == 't') {
-				cls();
-				refresh_grid();
-			}
+            // Spacebar - Drop down.
+            else if (input == ' ') {
+                drop_block();
+            }
 
-			// X : Exit.
-			else if (input == 'x')
-				exiting();
+            // R - Restart.
+            else if (input == 'r') {
+                restart();
+            }
 
-		}
+            // T - Refresh.
+            else if (input == 't') {
+                cls();
+                refresh_grid();
+            }
 
-		// If it's time for the block to fall.
-		if (time >= CFT) {
-			time -= CFT;
-			if (valid_move(DOWN))			// Should always be true (I think).
-				refresh_block(DOWN);
-		}
-		
+            // X : Exit.
+            else if (input == 'x')
+                exiting();
 
-		usleep(UPOLL);		// Delay.
-		time++;
-	}
+        }
 
-	exiting();				// The exiting screen.
+        // If it's time for the block to fall.
+        if (time >= CFT) {
+            time -= CFT;
+            if (valid_move(DOWN))            // Should always be true (I think).
+                refresh_block(DOWN);
+        }
+        
 
-	return 0;
+        usleep(UPOLL);      // Delay.
+        time++;
+    }
+
+    exiting();              // The exiting screen.
+
+    return 0;
 }
 

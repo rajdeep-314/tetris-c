@@ -14,42 +14,42 @@
 
 
 void cls() {
-	printf("\e[2J\e[0;0H");
+    printf("\e[2J\e[0;0H");
 }
 
 
 void setc(int x, int y) {
-	printf("\e[%d;%dH", x, y);
+    printf("\e[%d;%dH", x, y);
 }
 
 
 void putcat(int x, int y, char c) {
-	setc(x, y);
-	putchar(c);
+    setc(x, y);
+    putchar(c);
 }
 
 
 void hide_cursor() {
-	printf("\e[?25l");
+    printf("\e[?25l");
 }
 
 
 void show_cursor() {
-	printf("\e[?25h");
+    printf("\e[?25h");
 }
 
 
 int kp(int usec) {
-	struct timeval tv;
-	fd_set fds;
+    struct timeval tv;
+    fd_set fds;
 
-	tv.tv_sec = 0;
-	tv.tv_usec = usec;
+    tv.tv_sec = 0;
+    tv.tv_usec = usec;
 
-	FD_ZERO(&fds);
-	FD_SET(STDIN_FILENO, &fds);
+    FD_ZERO(&fds);
+    FD_SET(STDIN_FILENO, &fds);
 
-	return select(STDIN_FILENO + 1, &fds, NULL, NULL, &tv);
+    return select(STDIN_FILENO + 1, &fds, NULL, NULL, &tv);
 }
 
 
@@ -72,11 +72,11 @@ void restore_terminal_mode() {
 
 
 int randint(int a, int b) {
-	return (a + random() % (b - a + 1));
+    return (a + random() % (b - a + 1));
 }
 
 
 char lowercase(char c) {
-	return (65 <= c && c <= 90 ? c ^ 32 : c);
+    return (65 <= c && c <= 90 ? c ^ 32 : c);
 }
 

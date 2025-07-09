@@ -4,7 +4,7 @@
 
 // Directions.
 typedef enum {
-	UP, DOWN, LEFT, RIGHT
+    UP, DOWN, LEFT, RIGHT
 } dir;
 
 
@@ -65,7 +65,7 @@ int valid_move(dir d);
 
 // Hide the current block, move it in the direction d and then
 // show the new block.
-// NOTE:	Assumes that the move is valid.
+// NOTE:    Assumes that the move is valid.
 void refresh_block(dir d);
 
 // Drop the block down as far as it can go.
@@ -78,7 +78,7 @@ int valid_rotation();
 void rotate();
 
 // Update the grid with the cells that make up the block.
-// NOTE:	Also checks for game over condtion.
+// NOTE:    Also checks for game over condtion.
 void add_block_to_grid();
 
 // Generate a new block.
