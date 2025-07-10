@@ -81,8 +81,8 @@ int main() {
                     refresh_block(DOWN);
             }
 
-            // W, K - Rotate clockwise.
-            else if (input == 'w' || input == 'k') {
+            // W, I - Rotate clockwise.
+            else if (input == 'w' || input == 'i') {
                 if (valid_rotation())
                     rotate();
             }

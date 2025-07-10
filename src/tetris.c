@@ -48,6 +48,7 @@ void restart() {
     init_params();
     load_board();
     make_new_block();
+    show_score();
     fflush(stdout);
 }
 

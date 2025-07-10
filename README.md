@@ -35,6 +35,16 @@ Check out [this](https://www.youtube.com/watch?v=iaHm9NIWYfU) YouTube video for
 a gameplay.
 
 
+# Binaries
+
+## Wii Homebrew
+
+[`binaries/tetris-c.dol`](binaries/tetris-c.dol) is a Wii Homebrew version of
+this project. Run using Dolphin emulator or on modded Wii via Homebrew Channel.
+
+Credits to [Abdelali](https://github.com/abdelali221) for this.
+
+
 # How to play?
 
 ## Building and running
@@ -71,7 +81,7 @@ make run
 - `p` : Pause
 - `r` : Restart
 - `t` : Refresh (in case of a visual glitch)
-- `w`, `k` : Rotate the block clockwise by $90^\circ$
+- `w`, `i` : Rotate the block clockwise by $90^\circ$
 
 ### Pause screen
 
